@@ -18,3 +18,5 @@
 
 Route::get('/todos', 'TodosController@index');
 Route::post('/todos', 'TodosController@store');
+Route::post('/complete', 'TodosController@complete');
+Route::post('/delete', 'TodosController@destroy');

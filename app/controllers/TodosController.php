@@ -32,12 +32,9 @@ class TodosController extends \BaseController {
 				'messages' => $validator->messages()->all(),
 			));
 		}
-		
-		$data['user_id'] = 1;
-		$data['completed'] = 0;
 
 		$todo = new Todo;
-		$todo->title = 'hello world.';
+		$todo->title = $data['title'];
 		$todo->completed = 0;
 		$todo->user_id = 1;
 		$todo->save();
@@ -49,38 +46,57 @@ class TodosController extends \BaseController {
 	}
 
 	/**
-	 * Update the specified todo in storage.
+	 * Complete the specified todo from storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function complete()
 	{
-		$todo = Todo::findOrFail($id);
-
-		$validator = Validator::make($data = Input::all(), Todo::$rules);
-
-		if ($validator->fails())
-		{
-			return Redirect::back()->withErrors($validator)->withInput();
+		$id = Input::get('id');
+		$todo = Todo::find($id);
+		
+		if ( $todo ) {
+			$todo->completed = 1;
+			$todo->save();
+			$result = array(
+				'error' => 0,
+				'messages' => '搞定',
+			);
+		} else {
+			$result = array(
+				'error' => 1,
+				'messages' => '未找到记录',
+			);
 		}
-
-		$todo->update($data);
-
-		return Redirect::route('todos.index');
+		return Response::json($result);
 	}
-
+	
+	
 	/**
 	 * Remove the specified todo from storage.
 	 *
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy()
 	{
-		Todo::destroy($id);
-
-		return Redirect::route('todos.index');
+		$id = Input::get('id');
+		$todo = Todo::find($id);
+		
+		if ( $todo ) {
+			$todo->delete();
+			$result = array(
+				'error' => 0,
+				'messages' => '删除成功',
+			);
+		} else {
+			$result = array(
+				'error' => 1,
+				'messages' => '未找到记录(id='.$id.')',
+			);
+		}
+		return Response::json($result);
 	}
 
 }

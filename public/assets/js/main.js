@@ -7,9 +7,31 @@ function add(text) {
 		, lock: false
 		, drag: true
 		, ok: {text:'搞定', callback: function() {
-			this.title('已完成')
-			this.$el.find('.mod-dialog-bottom').hide()
+			var self = this
+			
+			self.title('已完成')
+			self.$el.find('.mod-dialog-bottom').hide()
+					
+			// 保存到服务端
+			$.post('complete', {id: self.todo_id})
+			.success(function(data) {
+				if ( data.error ) {
+					alert(data.messages)
+				}
+			})
+			
 			return false
+		}}
+		, cancel: {text:'取消', callback: function() {
+			var self = this
+			
+			// 保存到服务端
+			$.post('delete', {id: self.todo_id})
+			.success(function(data) {
+				if ( data.error ) {
+					alert(data.messages)
+				}
+			})
 		}}
 		, style: {
 			'dialog': {'box-shadow': '5px 5px 20px #666'}
@@ -27,10 +49,21 @@ window.Todo = {
 	add: add
 }
 
+// 添加
 $(document).dblclick(function(){
-	var text = prompt('请输入便签内容：')
-	if (text) {
-		add(text)
+	var title = prompt('请输入便签内容：')
+	
+	if (title) {
+		
+		// 保存到服务端
+		$.post('todos', {title: title})
+		.success(function(data) {
+			if ( data.error ) {
+				alert(data.messages)
+			} else {
+				add(title)
+			}
+		})
 	}
 })
 

@@ -22,6 +22,8 @@
 		// 将 todo 列表，以弹窗形式显示在页面上
 		$(list).each(function(i, item){
 			var dialog = Todo.add(item.title)
+			dialog.todo_id = item.id
+			
 			if (item.completed) {
 				dialog.ok()
 			}

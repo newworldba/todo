@@ -10,13 +10,15 @@ class TodoTableSeeder extends Seeder {
 		Todo::create([
 			'title' => '今天中午记得吃饭',
 			'completed' => 1,
-			'user_id' => $user->id
+			'user_id' => $user->id,
+			'point' => '50,50'
 		]);
 		
 		Todo::create([
 			'title' => '明天中午记得吃饭',
 			'completed' => 0,
-			'user_id' => $user->id
+			'user_id' => $user->id,
+			'point' => '450,250'
 		]);
 	}
 

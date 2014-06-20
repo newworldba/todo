@@ -18,7 +18,8 @@ class CreateTodosTable extends Migration {
 			$table->increments('id');
 			$table->integer('user_id')->unsigned();
 			$table->string('title', 140);
-			$table->boolean('completed')-default(0);
+			$table->boolean('completed')->default(0);
+			$table->string('point', 40)->default('');
 			$table->timestamps();
 		});
 	}
