@@ -92,7 +92,7 @@ var defaults = {
 // 所有弹窗都放到此区域
 // 注意避免可能的重复添加
 if ( !$('#'+ContainerId).length ) {
-	$('body').prepend('<div id="'+ContainerId+'"><table><tr><td></td></tr></table></div>')
+	$('body').prepend('<div id="'+ContainerId+'"><table style="position:absolute;"><tr><td></td></tr></table></div>')
 }
 
 // 注意：
