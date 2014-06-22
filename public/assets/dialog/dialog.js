@@ -256,7 +256,7 @@ function mousemove(e) {
 	})
 }
 
-function mouseup() {
+function mouseup() {	
 	dom.unbind('mousemove.drag')
 	.unbind('mouseup.drag')
 	.unbind("selectstart.drag")
@@ -272,6 +272,7 @@ dom.delegate('.mod-dialog-title', 'mousedown', function(e) {
 	var panel = $(this).closest('.mod-dialog')
 	var dialog = panel.data('dialog')
 	var offset = panel.offset()
+	var movestart = 0
 	
 	// 窗口可以拖动
 	if ( dialog.option.drag ) {
@@ -282,10 +283,14 @@ dom.delegate('.mod-dialog-title', 'mousedown', function(e) {
 		
 		dom.bind('mousemove.drag', function(e) {
 			mousemove.call(panel, e)
-			
+			movestart = 1
 		}).bind('mouseup.drag', function(e) {
 		
 			mouseup.call(panel, e)
+			
+			if (movestart && typeof dialog.option.movedown === 'function') {
+				dialog.option.movedown.call(dialog)
+			}
 			
 		}).bind("selectstart.drag", function() {
 			return false

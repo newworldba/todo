@@ -11,8 +11,8 @@ function add(text) {
 			
 			self.title('已完成')
 			self.$el.find('.mod-dialog-bottom').hide()
-					
-			// 保存到服务端
+			
+			// 完成
 			$.post('complete', {id: self.todo_id})
 			.success(function(data) {
 				if ( data.error ) {
@@ -25,7 +25,7 @@ function add(text) {
 		, cancel: {text:'取消', callback: function() {
 			var self = this
 			
-			// 保存到服务端
+			// 删除
 			$.post('delete', {id: self.todo_id})
 			.success(function(data) {
 				if ( data.error ) {
@@ -33,6 +33,17 @@ function add(text) {
 				}
 			})
 		}}
+		, movedown: function(){
+			// 移动
+			var self = this
+			var point = self.$el.offset()
+			$.post('move', {id: self.todo_id, point: point.left+','+point.top})
+			.success(function(data) {
+				if ( data.error ) {
+					alert(data.messages)
+				}
+			})
+		}
 		, style: {
 			'dialog': {'box-shadow': '5px 5px 20px #666'}
 			, 'title': {'font-weight': 'bold', cursor: 'default'}
@@ -55,31 +66,36 @@ $(document).dblclick(function(){
 	
 	if (title) {
 		
-		// 保存到服务端
+		// 添加
 		$.post('todos', {title: title})
 		.success(function(data) {
+			var dialog
 			if ( data.error ) {
 				alert(data.messages)
 			} else {
-				add(title)
+				dialog = add(title)
+				dialog.todo_id = data.todo_id
 			}
 		})
 	}
 })
 
-dialog({
-	title: '提示信息'
-	, content: '鼠标双击页面，可以增加便签。'
-	, width: 300
-	, drag: true
-	, ok: {text:'知道了'}
-	, style: {
-		'dialog': {'box-shadow': '5px 5px 20px #666'}
-		, 'title': {'font-weight': 'bold', cursor: 'default'}
-		, 'content': {'font-size': '14px'}
-		, 'bottom': {}
-		, 'close': {}
-		, 'cancel': {'display':'none'}
-	}
+// 显示 todo 列表
+$.get('todos')
+.success(function(list) {
+	// 将 todo 列表，以弹窗形式显示在页面上
+	$(list).each(function(i, item){
+		var dialog = Todo.add(item.title)
+		dialog.todo_id = item.id
+		
+		if (item.completed) {
+			dialog.title('已完成')
+			dialog.$el.find('.mod-dialog-bottom').hide()
+		}
+		// 设置一个位置
+		item.point = item.point || '0,0'
+		var arr = item.point.split(',')
+		dialog.$el.css({margin:0, left: parseInt(arr[0]), top: parseInt(arr[1])})
+	})
 })
 }(jQuery, document)

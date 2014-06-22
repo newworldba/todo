@@ -11,12 +11,19 @@
 |
 */
 
-// Route::get('/', function()
-// {
-//	 return View::make('hello');
-// });
 
-Route::get('/todos', 'TodosController@index');
-Route::post('/todos', 'TodosController@store');
-Route::post('/complete', 'TodosController@complete');
-Route::post('/delete', 'TodosController@destroy');
+Route::get('/', array('before' => 'auth.basic', function()
+{
+	return View::make('index');
+}));
+
+
+Route::group(array('before' => 'auth'), function (){
+	$todos = 'TodosController';
+	Route::get('/todos', "$todos@index");
+	Route::post('/todos', "$todos@store");
+	Route::post('/complete', "$todos@complete");
+	Route::post('/delete', "$todos@destroy");
+	Route::post('/move', "$todos@move");
+});
+

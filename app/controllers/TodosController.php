@@ -23,6 +23,7 @@ class TodosController extends \BaseController {
 	{
 		$data = Input::all();
 		
+		/*
 		$validator = Validator::make($data, Todo::$rules);
 
 		if ($validator->fails())
@@ -32,7 +33,8 @@ class TodosController extends \BaseController {
 				'messages' => $validator->messages()->all(),
 			));
 		}
-
+		*/
+		
 		$todo = new Todo;
 		$todo->title = $data['title'];
 		$todo->completed = 0;
@@ -41,6 +43,7 @@ class TodosController extends \BaseController {
 
 		return Response::json(array(
 			'error' => 0,
+			'todo_id' => $todo->id,
 			'messages' => '添加成功',
 		));
 	}
@@ -62,6 +65,35 @@ class TodosController extends \BaseController {
 			$result = array(
 				'error' => 0,
 				'messages' => '搞定',
+			);
+		} else {
+			$result = array(
+				'error' => 1,
+				'messages' => '未找到记录',
+			);
+		}
+		return Response::json($result);
+	}
+
+	/**
+	 * Move the specified todo from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function move()
+	{
+		$id = Input::get('id');
+		$point = Input::get('point');
+		
+		$todo = Todo::find($id);
+		
+		if ( $todo ) {
+			$todo->point = $point;
+			$todo->save();
+			$result = array(
+				'error' => 0,
+				'messages' => '移动成功',
 			);
 		} else {
 			$result = array(
